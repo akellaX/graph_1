@@ -144,25 +144,33 @@ public class Conteiner {
         ArrayList<Integer> w=weight;
         sort(a,b,w);
         ArrayList<Integer> colors=new ArrayList<>();
+        ArrayList<Integer> res_l=new ArrayList<>();
+        ArrayList<Integer> res_r=new ArrayList<>();
         for(int i=0;i<tops;i++)
-            colors.set(i,-1);
-        int k=0;
+            colors.add(i);
         int sum=0;
         for(int i=0;i<arcs;i++)
         {
-            if((colors.get(a.get(i))==-1)&&(colors.get(b.get(i))==-1))
-            {
-                colors.set(a.get(i),k);
-                colors.set(b.get(i),k);
-                k++;
-                sum+=w.get(i);
-            }
-            else
-            {
-                if()
-            }
+           if(colors.get(a.get(i))!=colors.get(b.get(i)))
+           {
+               sum+=w.get(i);
+               res_l.add(a.get(i));
+               res_r.add(b.get(i));
+               int old_id=colors.get(b.get(i)), new_id=colors.get(a.get(i));
+               for(int j=0;j<tops;j++)
+                   if(colors.get(j)==old_id)
+                       colors.set(j,new_id);
+           }
+
 
         }
+
+        for(int i=0;i<res_l.size();i++)
+        {
+            System.out.println(res_l.get(i)+" "+res_r.get(i));
+        }
+        System.out.println(sum);
+
 
     }
 }

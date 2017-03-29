@@ -8,9 +8,10 @@ public class main {
 
     public static void main(String args[])
     {
-        Conteiner gr=new Conteiner("first.txt");
-        gr.writing();
+        Conteiner gr=new Conteiner("second.txt");
+//        gr.writing();
         gr.drawing();
+        gr.kraskal();
 
 
     }
