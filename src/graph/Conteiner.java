@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -22,6 +24,7 @@ public class Conteiner {
     ArrayList<Integer> weight = new ArrayList<>();
     Integer tops;
     Integer arcs;
+    Integer INF=10000;
 
     public Conteiner(String text) {
         reading(text);
@@ -103,9 +106,11 @@ public class Conteiner {
             g.addVertex(i);
         for (int i = 0; i < arcs; i++)
             g.addEdge(i, left.get(i), right.get(i));
+
         VisualizationImageServer vs =
                 new VisualizationImageServer(
                         new CircleLayout(g), new Dimension(200, 200));
+
         vs.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
         vs.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
 
@@ -173,4 +178,153 @@ public class Conteiner {
 
 
     }
-}
+
+    public void union_find()
+    {
+        ArrayList<Integer> a=left;
+        ArrayList<Integer> b=right;
+        ArrayList<Integer> w=weight;
+        sort(a,b,w);
+        ArrayList<Integer> m=new ArrayList<>();
+        int size=0;
+        ArrayList<Integer>colors=new ArrayList<>();
+        ArrayList<Integer> n=new ArrayList<>();
+        ArrayList<Integer> old=new ArrayList<>();
+        for(int i=0;i<tops;i++)
+        {
+            m.add(-1);
+            n.add(-1);
+            colors.add(i);
+            old.add(0);
+        }
+        for(int i=0;i<arcs;i++)
+        {
+            Integer first=find(a.get(i),m);
+            Integer second= find(b.get(i),m);
+            if((first!=second) &&(old.get(b.get(i))==0))
+            {
+                union(first,b.get(i),m);
+                union(a.get(i),b.get(i),n);
+                old.set(b.get(i),1);
+            }
+        }
+        for(int i=0;i<tops;i++)
+            System.out.println(i+" "+m.get(i)+" "+n.get(i));
+
+
+
+    }
+    private Integer find(Integer node,ArrayList<Integer>parents)
+    {
+        while(parents.get(node)!=-1)
+            node=parents.get(node);
+        return node;
+    }
+
+    private void union(Integer first, Integer second,ArrayList<Integer> parents)
+    {
+        parents.set(second,first);
+    }
+    public Integer searchweight(Integer a, Integer b)
+    {
+        int temp=0;
+        for (int k = head.get(a); k != -1; k = L.get(k)) {
+            if (right.get(k) == b) {
+                temp = weight.get(k);
+                break;
+            }
+        }
+
+                return temp;
+    };
+    public int dijkstra(int s) {
+        ArrayList<Integer> R = new ArrayList<>();
+        ArrayList<Integer> P = new ArrayList<>();
+        ArrayList<Integer> shortcut=new ArrayList<>();
+        for (int i = 0; i < tops ; i++) {
+            R.add(INF);
+            P.add(-2);
+        }
+        R.set(s, 0);
+        P.set(s, -1);
+        int C = weight.get(0);
+        for (int i = 1; i < arcs ; i++)
+            if (C < weight.get(i))
+                C = weight.get(i);
+        int M = C * tops;
+        Bucket B = new Bucket(M, tops);
+        B.INSERT(s, 0);
+        for (int b = 0; b <M; b++) {
+            int i;
+            while ( (i=B.GET(b))!=-1)
+            for (int k = head.get(i); k != -1; k = L.get(k))
+            {
+                int j=right.get(k);
+                int rj=R.get(j);
+                if(R.get(i)+weight.get(k)<rj)
+                { R.set(j,R.get(i)+weight.get(k));
+                P.set(j,left.get(k));}
+                if(rj!=INF)
+                    B.REMOVE(j,rj);
+                B.INSERT(j,R.get(j));
+            }
+
+
+        }
+//        for(int i=0;i<tops;i++)
+//            System.out.println(R.get(i));
+        int sum=0;
+        for(int i=0;i<tops;i++)
+            if(R.get(i)!=INF)
+            sum+=R.get(i);
+
+        for(int i=0;i<tops;i++)
+            System.out.print(P.get(i)+" ");
+        System.out.println();
+
+
+
+
+        return sum;
+
+
+
+
+
+    }
+
+
+
+
+
+
+    public void Blema_Ford(int numb)
+    {
+        ArrayList<Integer> a=left;
+        ArrayList<Integer> b=right;
+        ArrayList<Integer> w=weight;
+        ArrayList<Integer> d=new ArrayList<>();
+        for(int i=0;i<tops;i++)
+            d.add(INF);
+        d.set(numb,0);
+        for(int i=0;i<tops-1;i++)
+        {
+            for(int j=0;j<arcs;j++)
+            {
+                if(d.get(a.get(j))<INF)
+                {
+                    if(d.get(b.get(j))>(d.get(a.get(j))+w.get(j)))
+                        d.set(b.get(j),d.get(a.get(j))+w.get(j));
+//                    d.set(b.get(j),d.get(b.get(j)));
+
+                }
+            }
+        }
+        for(int i=0;i<d.size();i++)
+            System.out.println(d.get(i));
+    }
+
+
+
+    }
+
